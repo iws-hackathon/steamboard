@@ -1,0 +1,6 @@
+---
+  - name: Install steamboard
+    hosts: steamboard
+    connection: local
+    roles:
+      - { role: steamboard }

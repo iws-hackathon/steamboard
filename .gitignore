@@ -1,0 +1,9 @@
+# Ansible
+*.retry
+
+# Python
+*.pyc
+*__pycache__
+*__pycache__/*
+
+# Architecture

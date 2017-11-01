@@ -1,0 +1,2 @@
+serve:
+	gunicorn quote:app

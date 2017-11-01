@@ -1,0 +1,24 @@
+---
+  - name: foo
+    debug:
+      var: app_folder
+
+  - name: Create the app folder
+    file:
+      path: '{{ app_folder }}'
+      state: directory
+      mode: 0755
+
+  - name: Download blockly repo
+    git:
+      repo: 'https://github.com/google/blockly.git'
+      dest: '{{ blockly_folder }}'
+
+  - name: Download closure repo
+    git:
+      repo: 'https://github.com/google/closure-library.git'
+      dest: '{{ closure_folder }}'
+
+  # - name: Copy template files into app folder
+  #
+  # - name: Add server binary

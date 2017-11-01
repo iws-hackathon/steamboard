@@ -1,0 +1,4 @@
+---
+app_folder               : '/usr/local/opt/steamboard'
+blockly_folder           : '{{ app_folder }}/blockly'
+closure_folder           : '{{ app_folder }}/closure-library'
