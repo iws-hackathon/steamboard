@@ -30,9 +30,21 @@ import json
 from time import sleep
 import RPi.GPIO as GPIO
 
+# Local imports without install
+# import inspect
+# bin_file = inspect.stack()[0][1]
+# while os.path.islink(bin_file):
+#     bin_file = os.path.join(os.path.dirname(bin_file), os.readlink(bin_file))
+# proj_folder = os.path.abspath(os.path.join(os.path.dirname(bin_file), '..'))
+# sys.path.insert(0, os.path.join(proj_folder, 'src'))
+
+API_PORT = 1655
+STATIC_PORT = 8080
+BIND_ADDRESS = '192.168.0.241'#'127.0.0.1'
+API_PREFIX = '/board'
+
 _max_valve_runtime = 4
 _poll_sleep = 0.2
-
 _p_valve_open = 4
 _p_valve_close = 24
 _p_valve_opened = 18
@@ -64,44 +76,6 @@ def set_pins():
         except KeyError:
             GPIO.setup(pin, pins[pin])
 
-# Local imports without install
-import inspect
-bin_file = inspect.stack()[0][1]
-while os.path.islink(bin_file):
-    bin_file = os.path.join(os.path.dirname(bin_file), os.readlink(bin_file))
-proj_folder = os.path.abspath(os.path.join(os.path.dirname(bin_file), '..'))
-sys.path.insert(0, os.path.join(proj_folder, 'src'))
-
-API_PORT = 1655
-STATIC_PORT = 8080
-BIND_ADDRESS = '192.168.0.241'#'127.0.0.1'
-API_PREFIX = '/board'
-
-_valve_is_open_ = False
-_it_is_moist_ = False
-_it_is_dark_ = True
-'''
-def valve_is_open():
-    return _valve_is_open_
-
-def valve_is_closed():
-    return not _valve_is_open_
-
-def is_valve_open():
-    if _valve_is_open_:
-        return 'Valve is open'
-    return 'Valve is closed'
-
-def valve_open():
-    sleep(3)
-    _valve_is_open_ = True
-    return True
-
-def valve_close():
-    sleep(3)
-    _valve_is_open_ = False
-    return True
-'''
 def valve_is_open():
     set_pins()
     return GPIO.input(_p_valve_opened) and (not GPIO.input(_p_valve_closed))
@@ -145,18 +119,22 @@ def valve_close():
     return True
 
 def it_is_dark():
-    return _it_is_dark_
+    set_pins()
+    return GPIO.input(_p_darkness_detected)
 
 def is_it_dark():
-    if _it_is_dark_:
+    set_pins()
+    if GPIO.input(_p_darkness_detected):
        return "It's dark"
     return "It's not dark"
 
 def it_is_moist():
-    return _it_is_moist_
+    set_pins()
+    return GPIO.input(_p_moisture_detected)
 
 def is_it_moist():
-    if _it_is_moist_:
+    set_pins()
+    if GPIO.input(_p_moisture_detected):
        return "It's moist"
     return "It's not moist"
 
@@ -186,12 +164,7 @@ class RESTHandler(Handler):
         component = list(data['iws'].keys())[0]
         function = data['iws'][component]['function']
         func = function_map['iws'][component][data['iws'][component]['function']]
-        L.critical('STATE: V: %s M: %s D: %s' % (
-            str(_valve_is_open_),
-            str(_it_is_moist_),
-            str(_it_is_dark_),
-            ))
-        L.critical('Running function: ' + str(data['iws'][component]['function']))
+        L.critical('About to run function: ' + str(data['iws'][component]['function']))
         response = {
             json.dumps({
                 'value': func()
