@@ -49,8 +49,8 @@ _p_valve_open = 4
 _p_valve_close = 24
 _p_valve_opened = 18
 _p_valve_closed = 17
-_p_moisture_detected = 20
-_p_darkness_detected = 21
+_p_moisture_sensor = 20
+_p_light_sensor = 21
 
 def set_pins():
     GPIO.cleanup()
@@ -60,15 +60,15 @@ def set_pins():
         _p_valve_close: GPIO.OUT,
         _p_valve_opened: GPIO.IN,
         _p_valve_closed: GPIO.IN,
-        _p_darkness_detected: GPIO.IN,
-        _p_moisture_detected: GPIO.IN,
+        _p_light_sensor: GPIO.IN,
+        _p_moisture_sensor: GPIO.IN,
         }
 
     pud = {
         _p_valve_opened: GPIO.PUD_UP,
         _p_valve_closed: GPIO.PUD_UP,
-        _p_darkness_detected: GPIO.PUD_DOWN,
-        _p_moisture_detected: GPIO.PUD_UP,
+        _p_light_sensor: GPIO.PUD_DOWN,
+        _p_moisture_sensor: GPIO.PUD_UP,
     }
     for pin in list(pins.keys()):
         try:
@@ -120,23 +120,23 @@ def valve_close():
 
 def it_is_dark():
     set_pins()
-    return GPIO.input(_p_darkness_detected)
+    return (GPIO.input(_p_light_sensor) == 1)
 
 def is_it_dark():
     set_pins()
-    if GPIO.input(_p_darkness_detected):
+    if GPIO.input(_p_light_sensor):
        return "It's dark"
     return "It's not dark"
 
 def it_is_moist():
     set_pins()
-    return GPIO.input(_p_moisture_detected)
+    return not GPIO.input(_p_moisture_sensor)
 
 def is_it_moist():
     set_pins()
-    if GPIO.input(_p_moisture_detected):
-       return "It's moist"
-    return "It's not moist"
+    if GPIO.input(_p_moisture_sensor):
+       return "It's not moist"
+    return "It's moist"
 
 function_map = {
     'iws': {

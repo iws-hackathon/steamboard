@@ -6,10 +6,10 @@ Blockly.Blocks['it_is_dark'] = {
   init: function() {
     this.setOutput(true, 'Boolean');
     this.setColour(MS_HUE);
-    this.setTooltip('True if the moisture sensor is activated');
+    this.setTooltip('True if the light sensor detects darkness');
     this.setHelpUrl('');
     this.appendDummyInput('_DUMMY_')
-      .appendField('it is moist')
+      .appendField('it is dark')
   }
 };
 
