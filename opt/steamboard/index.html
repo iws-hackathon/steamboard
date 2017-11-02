@@ -2,52 +2,50 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Blockly Demo: Generating JavaScript</title>
   <script src="blockly/blockly_compressed.js"></script>
   <script src="blockly/blocks_compressed.js"></script>
   <script src="blockly/javascript_compressed.js"></script>
   <script src="blockly/msg/js/en.js"></script>
-  <script src="blocks/iws/valve.js"></script>
-  <style>
-    body {
-      background-color: #fff;
-      font-family: sans-serif;
-    }
-    h1 {
-      font-weight: normal;
-      font-size: 140%;
-    }
-  </style>
+
+  <script src="addon_boards/iws/blocks/valve.js"></script>
+
+  <link href="css/steamboard.css" rel="stylesheet">
+
+  <title>SteamBoard</title>
 </head>
 <body>
-  <h1><a href="https://developers.google.com/blockly/">Blockly</a> &gt;
-    <a href="blockly/demos/index.html">Demos</a> &gt; Generating JavaScript</h1>
-
-  <p>This is a simple demo of generating code from blocks.</p>
-
-  <p>&rarr; More info on <a href="https://developers.google.com/blockly/guides/configure/web/code-generators">Code Generators</a>&hellip;</p>
-
-  <p>
+  <table id="blocklyTable">
+    <tr id="blocklyRow">
+      <td id="blocklyArea"></td>
+    </tr>
+  </table>
+  <div id="blocklyDiv"></div>
+  <div id="userControlsDiv">
     <button onclick="showCode()">Show JavaScript</button>
     <button onclick="runCode()">Run JavaScript</button>
     <button onclick="downloadWorkspace()">Download Workspace</button>
     <input type="file" id="load_input" onchange="handleFileUploadChange(this.files)">
-  </p>
-
-  <div id="blocklyDiv" style="height: 480px; width: 600px;"></div>
+  </div>
 
   <xml id="toolbox" style="display: none">
-    <category name="IWS">
-      <category name="Valve">
-        <block type="valve_open"></block>
-      </category>
-    </category>
     <category name="Logic">
-      <block type="controls_if"></block>
-      <block type="logic_compare"></block>
-      <block type="logic_operation"></block>
-      <block type="logic_negate"></block>
-      <block type="logic_boolean"></block>
+      <category name="If">
+        <block type="controls_if"></block>
+        <block type="controls_if">
+          <mutation else="1"></mutation>
+        </block>
+        <block type="controls_if">
+          <mutation elseif="1" else="1"></mutation>
+        </block>
+      </category>
+      <category name="Boolean">
+        <block type="logic_compare"></block>
+        <block type="logic_operation"></block>
+        <block type="logic_negate"></block>
+        <block type="logic_boolean"></block>
+        <block type="logic_null"></block>
+        <block type="logic_ternary"></block>
+      </category>
     </category>
     <category name="Loops">
       <block type="controls_repeat_ext">
@@ -58,19 +56,108 @@
         </value>
       </block>
       <block type="controls_whileUntil"></block>
+      <block type="controls_for">
+        <field name="VAR">i</field>
+        <value name="FROM">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="TO">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+        <value name="BY">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+      </block>
+      <block type="controls_forEach"></block>
+      <block type="controls_flow_statements"></block>
     </category>
-    <category name="Math">
+    <category name="math">
       <block type="math_number"></block>
       <block type="math_arithmetic"></block>
       <block type="math_single"></block>
+      <block type="math_trig"></block>
+      <block type="math_constant"></block>
+      <block type="math_number_property"></block>
+      <block type="math_round"></block>
+      <block type="math_on_list"></block>
+      <block type="math_modulo"></block>
+      <block type="math_constrain">
+        <value name="LOW">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="HIGH">
+          <block type="math_number">
+            <field name="NUM">100</field>
+          </block>
+        </value>
+      </block>
+      <block type="math_random_int">
+        <value name="FROM">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="TO">
+          <block type="math_number">
+            <field name="NUM">100</field>
+          </block>
+        </value>
+      </block>
+      <block type="math_random_float"></block>
     </category>
-    <category name="Text">
+    <category name="text">
       <block type="text"></block>
+      <block type="text_join"></block>
+      <block type="text_create_join_container"></block>
+      <block type="text_create_join_item"></block>
+      <block type="text_append"></block>
       <block type="text_length"></block>
-      <block type="text_print"></block>
+      <block type="text_isEmpty"></block>
+      <block type="text_indexOf"></block>
+      <block type="text_charAt"></block>
+    </category>
+    <category name="Variables" custom="VARIABLE">
+      <block type="variables_get"></block>
+      <block type="variables_set"></block>
+    </category>
+    <category name="Lists">
+      <block type="lists_create_empty"></block>
+      <block type="lists_create_with"></block>
+      <block type="lists_repeat">
+        <value name="NUM">
+          <block type="math_number">
+            <field name="NUM">5</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_length"></block>
+      <block type="lists_isEmpty"></block>
+      <block type="lists_indexOf"></block>
+      <block type="lists_getIndex"></block>
+      <block type="lists_setIndex"></block>
+    </category>
+    <category name="colour">
+      <block type="colour_picker"></block>
+      <block type="colour_random"></block>
+      <block type="colour_rgb"></block>
+      <block type="colour_blend"></block>
+    </category>
+    <category name="Functions" custom="PROCEDURE"></category>
+    <sep></sep>
+    <category name="IWS">
+      <category name="Valve">
+        <block type="valve_open"></block>
+      </category>
     </category>
   </xml>
-
   <xml id="startBlocks" style="display: none">
     <block type="controls_if" inline="false" x="20" y="20">
       <mutation else="1"></mutation>
@@ -100,7 +187,7 @@
         </block>
       </value>
       <statement name="DO0">
-	<block type="valve_open">
+	      <block type="valve_open">
           <value name="TIMEOUT">
             <block type="math_number">
                <field name="NUM">345</field>
@@ -119,81 +206,6 @@
       </statement>
     </block>
   </xml>
-
-  <script>
-    var demoWorkspace = Blockly.inject(
-        'blocklyDiv',
-        {
-            media: 'blockly/media/',
-            toolbox: document.getElementById('toolbox')
-        });
-    Blockly.Xml.domToWorkspace(
-        document.getElementById('startBlocks'),
-        demoWorkspace
-    );
-
-    function showCode() {
-      // Generate JavaScript code and display it.
-      Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
-      var code = Blockly.JavaScript.workspaceToCode(demoWorkspace);
-      alert(code);
-    }
-
-    function runCode() {
-      // Generate JavaScript code and run it.
-      window.LoopTrap = 1000;
-      Blockly.JavaScript.INFINITE_LOOP_TRAP =
-          'if (--window.LoopTrap == 0) throw "Infinite loop.";\n';
-      var code = Blockly.JavaScript.workspaceToCode(demoWorkspace);
-      Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
-      try {
-        eval(code);
-      } catch (e) {
-        alert(e);
-      }
-    }
-
-
-    function downloadNamedURL(data, name) {
-        var hiddenIFrameID = 'hiddenDownloader';
-        var download_div = document.getElementById(hiddenIFrameID);
-        if (download_div === null) {
-            download_div = document.createElement('div');
-            download_div.id = hiddenIFrameID;
-            download_div.style.display = 'none';
-            document.body.appendChild(download_div);
-        }
-        download_div.innerHTML = "";
-        var link = document.createElement('a');
-
-        link.setAttribute("href", data);
-        link.setAttribute("download", name);
-        download_div.appendChild(link);
-        link.click();
-    };
-
-
-    function dataAsNamedDownload(data, name) {
-        downloadNamedURL('data:text/tab-separated-values;base64,' + window.btoa(data), name);
-    }
-
-    function downloadWorkspace() {
-        var xml = Blockly.Xml.workspaceToDom(demoWorkspace);
-        var xml_text = Blockly.Xml.domToText(xml);
-
-        dataAsNamedDownload(xml_text, "blockly_save.xml")
-    }
-
-    function handleFileUploadChange(files) {
-        var reader = new FileReader();
-        reader.onload = function(event) {
-            var xml = Blockly.Xml.textToDom(event.target.result);
-            demoWorkspace.clear();
-            Blockly.Xml.domToWorkspace(xml, demoWorkspace);
-        }
-        reader.readAsText(files[0]);
-    }
-  </script>
-
+  <script src="js/steamboard.js"></script>
 </body>
 </html>

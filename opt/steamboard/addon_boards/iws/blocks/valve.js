@@ -5,7 +5,7 @@ var VALVE_HUE = 250;
 var ajax_test = function(timeout_) {
   var code = [
     'var xhr = new XMLHttpRequest();\n',
-    'xhr.open("POST", "/board", true);\n',
+    'xhr.open("POST", "/board", false);\n',
     'xhr.setRequestHeader("Content-Type", "text/plain");\n',
     'xhr.onreadystatechange = function() {\n',
     '  if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {\n',
