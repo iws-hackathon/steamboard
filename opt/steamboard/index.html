@@ -7,6 +7,8 @@
   <script src="blockly/blocks_compressed.js"></script>
   <script src="blockly/javascript_compressed.js"></script>
   <script src="blockly/msg/js/en.js"></script>
+  <script src="blocks/iws/valve.js"></script>
+  <script src="blocks/gpio.js"></script>
   <style>
     body {
       background-color: #fff;
@@ -36,6 +38,11 @@
   <div id="blocklyDiv" style="height: 480px; width: 600px;"></div>
 
   <xml id="toolbox" style="display: none">
+    <category name="IWS">
+      <category name="Valve">
+        <block type="valve_open"></block>
+      </category>
+    </category>
     <category name="Logic">
       <block type="controls_if"></block>
       <block type="logic_compare"></block>

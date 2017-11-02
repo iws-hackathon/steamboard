@@ -34,26 +34,28 @@ while os.path.islink(bin_file):
 proj_folder = os.path.abspath(os.path.join(os.path.dirname(bin_file), '..'))
 sys.path.insert(0, os.path.join(proj_folder, 'src'))
 
-API_PORT=1655
-STATIC_PORT=8080
+API_PORT = 1655
+STATIC_PORT = 8080
+BIND_ADDRESS = '127.0.0.1' # '192.168.0.241'
+API_PREFIX = '/board'
 
 class RESTHandler(Handler):
     def get(self):
-        # with open('frode', 'w') as fh:
-        #     fh.write("WOOOOOOT\n")
         return {
             "GET": "works"
             }
 
     def post(self):
-        self.request.data.get("frode")
-        return {
-            "POST": "works"
+        ff = self.request.data.get("timeout")
+        response = {
+            "you POST-ed a timeout of:": "%s" % ff
             }
+        L.critical(response)
+        return response
 
 class app(WSGI):
     routes = [
-        ("/board", RESTHandler()),
+        (API_PREFIX, RESTHandler()),
         ]
 
 class Handler(http.server.SimpleHTTPRequestHandler):
@@ -67,10 +69,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        if self.path.startswith('/board'):
+        if self.path.startswith(API_PREFIX):
             # fetch the response
             proxy_response = urllib.request.urlopen(
-                'http://localhost:{}{}'.format(API_PORT, self.path)
+                'http://%s:%d%s' % (BIND_ADDRESS, API_PORT, self.path)
                 )
 
             # send status code from backend
@@ -92,25 +94,21 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
 
     def do_POST(self):
-        if self.path.startswith('/board'):
-            # extracting the data
+        if self.path.startswith(API_PREFIX):
             length = int(self.headers.get('content-length'))
-            if length:
-                # passing it on
+            if length > 0:
                 proxy_response = urllib.request.urlopen(
-                    'http://localhost:{}{}'.format(API_PORT, self.path),
-                    data=self.rfile.read(length),
+                    'http://localhost:%d%s' % (API_PORT, self.path),
+                    data=self.rfile.read(length)
                     )
 
-                # send status code from backend
                 self.send_response(proxy_response.getcode())
-
-                # send headers from backend
+                self.send_header('Access-Control-Allow-Origin', '*')
                 for (header, value) in proxy_response.getheaders():
-                    self.send_header(header, value)
+                    if header.lower() == 'transfer-encoding': continue
+                    else:
+                        self.send_header(header, value)
                 self.end_headers()
-
-                # send response body
                 self.copyfile(proxy_response, self.wfile)
 
                 return
@@ -122,8 +120,11 @@ def do_work( args, exit_string ):
     exit_string = 'success'
 
     try:
-        print('Wev development portal can now be accessed at http://127.0.0.1:8080/')
-        server = http.server.HTTPServer(('127.0.0.1', 8080), Handler)
+        print('STEAMBOARD can be accessed at http://%s:%d/' % (
+            BIND_ADDRESS,
+            STATIC_PORT,
+            ))
+        server = http.server.HTTPServer((BIND_ADDRESS, STATIC_PORT), Handler)
         print('-------')
         server.pages = {}
         server.serve_forever()
@@ -187,7 +188,7 @@ if __name__ == '__main__':
     L.critical('server-args: %s' % ' '.join(sys.argv[1:]))
     L.critical("Today is {:%b, %d %Y}".format(datetime.datetime.now()))
 
-    exit_string = do_work(args, 'Success')
+    exit_string = do_work(args, 'success')
 
     L.critical('Exit status: "%s"' % exit_string)
 
