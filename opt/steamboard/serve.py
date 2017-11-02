@@ -14,6 +14,7 @@ import argparse
 import sys
 import os
 import datetime
+from time import sleep
 
 from pycnic.core import WSGI, Handler
 import http.server
@@ -25,6 +26,7 @@ import platform
 import os
 import re
 from optparse import OptionParser
+import json
 
 # Local imports without install
 import inspect
@@ -39,17 +41,83 @@ STATIC_PORT = 8080
 BIND_ADDRESS = '127.0.0.1'
 API_PREFIX = '/board'
 
-class RESTHandler(Handler):
-    def get(self):
-        return {
-            "GET": "works"
-            }
+_valve_is_open_ = False
+_it_is_moist_ = False
+_it_is_dark_ = True
 
+def valve_is_open():
+    return _valve_is_open_
+
+def valve_is_closed():
+    return not _valve_is_open_
+
+def is_valve_open():
+    if _valve_is_open_:
+        return 'Valve is open'
+    return 'Valve is closed'
+
+def valve_open():
+    sleep(3)
+    _valve_is_open_ = True
+    return True
+
+def valve_close():
+    sleep(3)
+    _valve_is_open_ = False
+    return True
+
+def it_is_dark():
+    return _it_is_dark_
+
+def is_it_dark():
+    if _it_is_dark_:
+       return "It's dark"
+    return "It's not dark"
+
+def it_is_moist():
+    return _it_is_moist_
+
+def is_it_moist():
+    if _it_is_moist_:
+       return "It's moist"
+    return "It's not moist"
+
+function_map = {
+    'iws': {
+        'valve': {
+            'valve_is_open': valve_is_open,
+            'valve_is_closed': valve_is_closed,
+            'is_valve_open': is_valve_open,
+            'valve_open': valve_open,
+            'valve_close': valve_close,
+        },
+        'moistureSensor': {
+            'it_is_moist': it_is_moist,
+            'is_it_moist': is_it_moist,
+        },
+        'lightSensor': {
+            'it_is_dark': it_is_dark,
+            'is_it_dark': is_it_dark,
+        },
+    }
+}
+
+class RESTHandler(Handler):
     def post(self):
-        ff = self.request.data.get("timeout")
+        data = self.request.data.get("data")
+        component = list(data['iws'].keys())[0]
+        function = data['iws'][component]['function']
+        func = function_map['iws'][component][data['iws'][component]['function']]
+        L.critical('STATE: V: %s M: %s D: %s' % (
+            str(_valve_is_open_),
+            str(_it_is_moist_),
+            str(_it_is_dark_),
+            ))
+        L.critical('Running function: ' + str(data['iws'][component]['function']))
         response = {
-            "you POST-ed a timeout of:": "%s" % ff
-            }
+            json.dumps({
+                'value': func()
+                }).encode('UTF-8')}
         return response
 
 class app(WSGI):

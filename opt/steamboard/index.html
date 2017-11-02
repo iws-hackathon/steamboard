@@ -12,6 +12,7 @@
   <link href="css/steamboard.css" rel="stylesheet">
 
   <title>SteamBoard</title>
+
 </head>
 <body>
   <table id="blocklyTable">
@@ -115,6 +116,7 @@
     </category>
     <category name="text">
       <block type="text"></block>
+      <block type="text_print"></block>
       <block type="text_join"></block>
       <block type="text_create_join_container"></block>
       <block type="text_create_join_item"></block>
@@ -155,57 +157,59 @@
     <category name="IWS">
       <category name="Valve">
         <block type="valve_open"></block>
+        <block type="valve_close"></block>
+        <block type="valve_is_open"></block>
+        <block type="valve_is_closed"></block>
       </category>
     </category>
   </xml>
   <xml id="startBlocks" style="display: none">
-    <block type="controls_if" inline="false" x="20" y="20">
-      <mutation else="1"></mutation>
-      <value name="IF0">
-        <block type="logic_compare" inline="true">
-          <field name="OP">EQ</field>
-          <value name="A">
-            <block type="math_arithmetic" inline="true">
-              <field name="OP">MULTIPLY</field>
-              <value name="A">
-                <block type="math_number">
-                  <field name="NUM">6</field>
-                </block>
-              </value>
-              <value name="B">
-                <block type="math_number">
-                  <field name="NUM">7</field>
-                </block>
-              </value>
-            </block>
-          </value>
-          <value name="B">
-            <block type="math_number">
-              <field name="NUM">42</field>
-            </block>
-          </value>
+
+
+    <block type="controls_repeat_ext" x="68" y="35">
+      <value name="TIMES">
+        <block type="math_number" id="muClad.4`w6z2va3SIc0">
+          <field name="NUM">10</field>
         </block>
       </value>
-      <statement name="DO0">
-	      <block type="valve_open">
-          <value name="TIMEOUT">
-            <block type="math_number">
-               <field name="NUM">345</field>
-            </block>
+      <statement name="DO">
+        <block type="controls_if" inline="false" x="20" y="20">
+          <mutation else="1"></mutation>
+          <value name="IF0">
+            <block type="valve_is_open"></block>
           </value>
-        </block>
-      </statement>
-      <statement name="ELSE">
-        <block type="text_print">
-          <value name="TEXT">
-            <block type="text">
-              <field name="TEXT">Panic</field>
+          <statement name="DO0">
+    	      <block type="valve_open">
+              <value name="TIMEOUT">
+                <block type="math_number">
+                   <field name="NUM">4</field>
+                </block>
+              </value>
             </block>
-          </value>
+          </statement>
+          <statement name="ELSE">
+            <block type="valve_close">
+              <value name="TIMEOUT">
+                <block type="math_number">
+                   <field name="NUM">4</field>
+                </block>
+              </value>
+            </block>
+          </statement>
         </block>
       </statement>
     </block>
+    <next>
+      <block type="valve_close">
+        <value name="TIMEOUT">
+          <block type="math_number">
+             <field name="NUM">4</field>
+          </block>
+        </value>
+      </block>
+    </next>
   </xml>
-  <script src="js/steamboard.js"></script>
+  <script src="js/editor.js"></script>
+  <script src="js/xhrwrapper.js"></script>
 </body>
 </html>

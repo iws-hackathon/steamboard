@@ -1,15 +1,17 @@
 var blocklyArea = document.getElementById('blocklyArea');
 var blocklyDiv = document.getElementById('blocklyDiv');
 
-var demoWorkspace = Blockly.inject(
-    'blocklyDiv',
-    {
-        media: 'blockly/media/',
-        toolbox: document.getElementById('toolbox')
-    });
+var steamBoardWorkspace = Blockly.inject(
+  'blocklyDiv',
+  {
+    media: 'blockly/media/',
+    toolbox: document.getElementById('toolbox')
+  }
+);
+
 Blockly.Xml.domToWorkspace(
-    document.getElementById('startBlocks'),
-    demoWorkspace
+  document.getElementById('startBlocks'),
+  steamBoardWorkspace
 );
 
 var onresize = function(e) {
@@ -31,20 +33,17 @@ var onresize = function(e) {
 
   var controlsHeight = 40;
   var controlsDiv = document.getElementById('userControlsDiv');
-  console.log("TOP: " + controlsDiv.style.top + " LEFT: " + controlsDiv.style.left + " HEIGHT: " + controlsDiv.style.height);
 
   controlsDiv.style.top = (blocklyDiv.style.height - controlsHeight) + 'px';
   controlsDiv.style.left = '0px';
-  //controlsDiv.style.height = controlsHeight + 'px';
 
-  console.log("TOP: " + controlsDiv.style.top + " LEFT: " + controlsDiv.style.left + " HEIGHT: " + controlsDiv.style.height);
-  Blockly.svgResize(demoWorkspace);
+  Blockly.svgResize(steamBoardWorkspace);
 };
 
 function showCode() {
   // Generate JavaScript code and display it.
   Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
-  var code = Blockly.JavaScript.workspaceToCode(demoWorkspace);
+  var code = Blockly.JavaScript.workspaceToCode(steamBoardWorkspace);
   alert(code);
 }
 
@@ -53,7 +52,7 @@ function runCode() {
   window.LoopTrap = 1000;
   Blockly.JavaScript.INFINITE_LOOP_TRAP =
       'if (--window.LoopTrap == 0) throw "Infinite loop.";\n';
-  var code = Blockly.JavaScript.workspaceToCode(demoWorkspace);
+  var code = Blockly.JavaScript.workspaceToCode(steamBoardWorkspace);
   Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
   try {
     eval(code);
@@ -85,7 +84,7 @@ function dataAsNamedDownload(data, name) {
 }
 
 function downloadWorkspace() {
-    var xml = Blockly.Xml.workspaceToDom(demoWorkspace);
+    var xml = Blockly.Xml.workspaceToDom(steamBoardWorkspace);
     var xml_text = Blockly.Xml.domToText(xml);
 
     dataAsNamedDownload(xml_text, "blockly_save.xml")
@@ -95,8 +94,8 @@ function handleFileUploadChange(files) {
     var reader = new FileReader();
     reader.onload = function(event) {
         var xml = Blockly.Xml.textToDom(event.target.result);
-        demoWorkspace.clear();
-        Blockly.Xml.domToWorkspace(xml, demoWorkspace);
+        steamBoardWorkspace.clear();
+        Blockly.Xml.domToWorkspace(xml, steamBoardWorkspace);
     }
     reader.readAsText(files[0]);
 }
