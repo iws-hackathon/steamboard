@@ -27,6 +27,42 @@ import os
 import re
 from optparse import OptionParser
 import json
+from time import sleep
+import RPi.GPIO as GPIO
+
+_max_valve_runtime = 4
+_poll_sleep = 0.2
+
+_p_valve_open = 4
+_p_valve_close = 24
+_p_valve_opened = 18
+_p_valve_closed = 17
+_p_moisture_detected = 20
+_p_darkness_detected = 21
+
+def set_pins():
+    GPIO.cleanup()
+    GPIO.setmode(GPIO.BCM)
+    pins = {
+        _p_valve_open: GPIO.OUT,
+        _p_valve_close: GPIO.OUT,
+        _p_valve_opened: GPIO.IN,
+        _p_valve_closed: GPIO.IN,
+        _p_darkness_detected: GPIO.IN,
+        _p_moisture_detected: GPIO.IN,
+        }
+
+    pud = {
+        _p_valve_opened: GPIO.PUD_UP,
+        _p_valve_closed: GPIO.PUD_UP,
+        _p_darkness_detected: GPIO.PUD_DOWN,
+        _p_moisture_detected: GPIO.PUD_UP,
+    }
+    for pin in list(pins.keys()):
+        try:
+            GPIO.setup(pin, pins[pin], pull_up_down=pud[pin])
+        except KeyError:
+            GPIO.setup(pin, pins[pin])
 
 # Local imports without install
 import inspect
@@ -38,13 +74,13 @@ sys.path.insert(0, os.path.join(proj_folder, 'src'))
 
 API_PORT = 1655
 STATIC_PORT = 8080
-BIND_ADDRESS = '127.0.0.1'
+BIND_ADDRESS = '192.168.0.241'#'127.0.0.1'
 API_PREFIX = '/board'
 
 _valve_is_open_ = False
 _it_is_moist_ = False
 _it_is_dark_ = True
-
+'''
 def valve_is_open():
     return _valve_is_open_
 
@@ -64,6 +100,48 @@ def valve_open():
 def valve_close():
     sleep(3)
     _valve_is_open_ = False
+    return True
+'''
+def valve_is_open():
+    set_pins()
+    return GPIO.input(_p_valve_opened) and (not GPIO.input(_p_valve_closed))
+
+def valve_is_closed():
+    set_pins()
+    return (not GPIO.input(_p_valve_opened)) and GPIO.input(_p_valve_closed)
+
+def is_valve_open():
+    set_pins()
+    if valve_is_open():
+        return 'Valve is open'
+    return 'Valve is closed'
+
+def stop_valve():
+    GPIO.output(_p_valve_open, GPIO.LOW)
+    GPIO.output(_p_valve_close, GPIO.LOW)
+
+def valve_open():
+    set_pins()
+    stop_valve()
+    polls = _max_valve_runtime / _poll_sleep
+    GPIO.output(_p_valve_open, GPIO.HIGH)
+    poll_count = 0
+    while ( not valve_is_open() and (poll_count < polls) ):
+        poll_count += 1
+        sleep(_poll_sleep)
+    stop_valve()
+    return True
+
+def valve_close():
+    set_pins()
+    stop_valve()
+    polls = _max_valve_runtime / _poll_sleep
+    GPIO.output(_p_valve_close, GPIO.HIGH)
+    poll_count = 0
+    while ( not valve_is_closed() and (poll_count < polls) ):
+        poll_count += 1
+        sleep(_poll_sleep)
+    stop_valve()
     return True
 
 def it_is_dark():
@@ -185,7 +263,6 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 def do_work( args, exit_string ):
     exit_string = 'success'
-
     try:
         print('STEAMBOARD can be accessed at http://%s:%d/' % (
             BIND_ADDRESS,
