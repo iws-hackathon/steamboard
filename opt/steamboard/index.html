@@ -8,7 +8,6 @@
   <script src="blockly/javascript_compressed.js"></script>
   <script src="blockly/msg/js/en.js"></script>
   <script src="blocks/iws/valve.js"></script>
-  <script src="blocks/gpio.js"></script>
   <style>
     body {
       background-color: #fff;
@@ -101,16 +100,16 @@
         </block>
       </value>
       <statement name="DO0">
-        <block type="text_print" inline="false">
-          <value name="TEXT">
-            <block type="text">
-              <field name="TEXT">Don't panic</field>
+	<block type="valve_open">
+          <value name="TIMEOUT">
+            <block type="math_number">
+               <field name="NUM">345</field>
             </block>
           </value>
         </block>
       </statement>
       <statement name="ELSE">
-        <block type="text_print" inline="false">
+        <block type="text_print">
           <value name="TEXT">
             <block type="text">
               <field name="TEXT">Panic</field>
@@ -125,7 +124,7 @@
     var demoWorkspace = Blockly.inject(
         'blocklyDiv',
         {
-            media: '../../media/',
+            media: 'blockly/media/',
             toolbox: document.getElementById('toolbox')
         });
     Blockly.Xml.domToWorkspace(

@@ -36,7 +36,7 @@ sys.path.insert(0, os.path.join(proj_folder, 'src'))
 
 API_PORT = 1655
 STATIC_PORT = 8080
-BIND_ADDRESS = '127.0.0.1' # '192.168.0.241'
+BIND_ADDRESS = '192.168.0.241'
 API_PREFIX = '/board'
 
 class RESTHandler(Handler):
@@ -50,7 +50,6 @@ class RESTHandler(Handler):
         response = {
             "you POST-ed a timeout of:": "%s" % ff
             }
-        L.critical(response)
         return response
 
 class app(WSGI):
@@ -98,7 +97,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             length = int(self.headers.get('content-length'))
             if length > 0:
                 proxy_response = urllib.request.urlopen(
-                    'http://localhost:%d%s' % (API_PORT, self.path),
+                    'http://%s:%d%s' % (BIND_ADDRESS, API_PORT, self.path),
                     data=self.rfile.read(length)
                     )
 
@@ -146,7 +145,7 @@ def do_work( args, exit_string ):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--port', type=int, default=8080, help='Port to serve blockly on')
+    parser.add_argument('--port', type=int, default=STATIC_PORT, help='Port to serve blockly on')
     parser.add_argument('--log', default='CRITICAL', choices=['DEBUG','INFO','WARNING','ERROR','CRITICAL'], help='Logging level')
     parser.add_argument('--log_file', default=None, help='Path to logfile')
 

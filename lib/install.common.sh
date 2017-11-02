@@ -41,6 +41,26 @@ prompt_confirm() {
   done
 }
 
+install_deps() {
+  apt-get install build-essential libc6-dev libncurses5-dev libncursesw5-dev libreadline6-dev libdb5.3-dev libgdbm-dev libsqlite3-dev libssl-dev libbz2-dev libexpat1-dev liblzma-dev zlib1g-dev
+  cd /tmp
+  mkdir steamboard-deps-install
+  cd python-install
+  wget https://www.python.org/ftp/python/3.5.2/Python-3.5.2.tgz
+  tar -zxvf Python-3.5.2.tgz
+  cd Python-3.5.2
+  ./configure
+  make -j4
+  make install
+
+  apt-get install python3-pip
+
+  pip3 install --upgrade pip
+  pip3 install virtualenv
+
+  rm -rf /tmp/steamboard-deps-install
+}
+
 install_python_tools() {
   # Check if root
   [[ "$(whoami)" == "root" ]] && msg_exit "Please run as a normal user not root"
