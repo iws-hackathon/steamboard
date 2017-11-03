@@ -10,6 +10,7 @@
   <script src="addon_boards/iws/blocks/valve.js"></script>
   <script src="addon_boards/iws/blocks/moistureSensor.js"></script>
   <script src="addon_boards/iws/blocks/lightSensor.js"></script>
+  <script src="addon_boards/system/blocks/time.js"></script>
 
   <link href="css/steamboard.css" rel="stylesheet">
 
@@ -24,9 +25,9 @@
   </table>
   <div id="blocklyDiv"></div>
   <div id="userControlsDiv">
-    <button onclick="showCode()">Show JavaScript</button>
-    <button onclick="runCode()">Run JavaScript</button>
-    <button onclick="downloadWorkspace()">Download Workspace</button>
+    <button onclick="showCode()">Show source</button>
+    <button onclick="runCode()">Run your code</button>
+    <button onclick="downloadWorkspace()">Download</button>
     <input type="file" id="load_input" onchange="handleFileUploadChange(this.files)">
   </div>
 
@@ -51,6 +52,7 @@
       </category>
     </category>
     <category name="Loops">
+      <block type="sleep"></block>
       <block type="controls_repeat_ext">
         <value name="TIMES">
           <block type="math_number">

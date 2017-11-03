@@ -2,7 +2,7 @@ function check_component(control_data, timeout_secs) {
   var _break_block = false;
   var _value = undefined
   function set_value(response) {
-    console.log('IN the callback: ' + JSON.stringify(response));
+    //console.log('IN the callback: ' + JSON.stringify(response));
     _value = response['value'];
     _break_block = true;
   }
@@ -15,7 +15,7 @@ function check_component(control_data, timeout_secs) {
       // console.log('BREAKING');
       break; }
   }
-  console.log('Returning: ' + _value);
+  //console.log('Returning: ' + _value);
   return(_value);
 }
 
@@ -25,24 +25,10 @@ function _check_component(control_packet, callback) {
   xhr.setRequestHeader("Content-Type", "text/plain");
   xhr.onreadystatechange = function() {
     if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-      console.log('POST CALL has returned: ' + xhr.response);
+      //console.log('POST CALL has returned: ' + xhr.response);
       callback(JSON.parse(xhr.response));
     }
   };
   xhr.send(control_packet);
 }
 
-// var control_component = function(control_packet) {
-//   code = [
-//     'var xhr = new XMLHttpRequest();',
-//     'xhr.open("POST", "/board", false);',
-//     'xhr.setRequestHeader("Content-Type", "text/plain");',
-//     'xhr.onreadystatechange = function() {',
-//     '  if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {',
-//     '    console.log(this);',
-//     '  }',
-//     '};',
-//     'xhr.send(\''+JSON.stringify(control_packet)+'\');'
-//     ].join('\n');
-//   return code;
-// };

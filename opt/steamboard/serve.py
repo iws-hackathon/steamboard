@@ -138,6 +138,10 @@ def is_it_moist():
        return "It's not moist"
     return "It's moist"
 
+def sb_sleep(seconds=4):
+    sleep(seconds)
+    return True
+
 function_map = {
     'iws': {
         'valve': {
@@ -155,16 +159,23 @@ function_map = {
             'it_is_dark': it_is_dark,
             'is_it_dark': is_it_dark,
         },
+    },
+    'system': {
+        'time': { 
+            'sleep': sb_sleep 
+        }
     }
 }
 
 class RESTHandler(Handler):
     def post(self):
         data = self.request.data.get("data")
-        component = list(data['iws'].keys())[0]
-        function = data['iws'][component]['function']
-        func = function_map['iws'][component][data['iws'][component]['function']]
-        L.critical('About to run function: ' + str(data['iws'][component]['function']))
+        L.critical(str(data))
+        addon = list(data.keys())[0]
+        component = list(data[addon].keys())[0]
+        function = data[addon][component]['function']
+        func = function_map[addon][component][function]
+        L.critical('About to run function: %s.%s.%s' % (function, component, addon))
         response = {
             json.dumps({
                 'value': func()
@@ -176,7 +187,7 @@ class app(WSGI):
         (API_PREFIX, RESTHandler()),
         ]
 
-class Handler(http.server.SimpleHTTPRequestHandler):
+class StaticProxyHandler(http.server.SimpleHTTPRequestHandler):
     def do_HEAD(self):
         '''Send response headers'''
         if self.path != '/':
@@ -241,7 +252,7 @@ def do_work( args, exit_string ):
             BIND_ADDRESS,
             STATIC_PORT,
             ))
-        server = http.server.HTTPServer((BIND_ADDRESS, STATIC_PORT), Handler)
+        server = http.server.HTTPServer((BIND_ADDRESS, STATIC_PORT), StaticProxyHandler)
         print('-------')
         server.pages = {}
         server.serve_forever()
