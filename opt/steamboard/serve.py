@@ -40,7 +40,7 @@ import RPi.GPIO as GPIO
 
 API_PORT = 1655
 STATIC_PORT = 8080
-BIND_ADDRESS = '192.168.0.241'#'127.0.0.1'
+BIND_ADDRESS = '192.168.43.43'#'127.0.0.1'
 API_PREFIX = '/board'
 
 _max_valve_runtime = 4

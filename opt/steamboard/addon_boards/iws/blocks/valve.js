@@ -64,8 +64,7 @@ Blockly.JavaScript['valve_open'] = function(block) {
     console.log('Overriding valve timeout == ' + timeout + ' with the saner value: ' + ABSOLUTE_MAX_TIMEOUT);
     timeout = ABSOLUTE_MAX_TIMEOUT;
   }
-  return [
-    'check_component(\''+JSON.stringify(
+  return 'check_component(\''+JSON.stringify(
       {
         'data': {
           'iws': {
@@ -78,9 +77,7 @@ Blockly.JavaScript['valve_open'] = function(block) {
           }
         }
       }
-    )+'\', 5)',
-    Blockly.JavaScript.ORDER_EQUALITY
-  ];
+    )+'\', 5)';
 };
 
 Blockly.JavaScript['valve_close'] = function(block) {
@@ -90,8 +87,7 @@ Blockly.JavaScript['valve_close'] = function(block) {
     console.log('Overriding valve timeout == ' + timeout + ' with the saner value: ' + ABSOLUTE_MAX_TIMEOUT);
     timeout = ABSOLUTE_MAX_TIMEOUT;
   }
-  return [
-    'check_component(\''+JSON.stringify(
+  return 'check_component(\''+JSON.stringify(
       {
         'data': {
           'iws': {
@@ -104,9 +100,7 @@ Blockly.JavaScript['valve_close'] = function(block) {
           }
         }
       }
-    )+'\', 5)',
-    Blockly.JavaScript.ORDER_EQUALITY
-  ];
+    )+'\', 5)';
 };
 
 Blockly.JavaScript['valve_is_open'] = function(block) {

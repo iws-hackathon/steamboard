@@ -21,8 +21,7 @@ Blockly.Blocks['sleep'] = {
 Blockly.JavaScript['sleep'] = function(block) {
   var timeout = Blockly.JavaScript.valueToCode(
       block, 'TIMEOUT', Blockly.JavaScript.ORDER_ATOMIC) || '0';
-  return [
-    'check_component(\''+JSON.stringify(
+  return 'check_component(\''+JSON.stringify(
       {
         'data': {
           'system': {
@@ -35,8 +34,6 @@ Blockly.JavaScript['sleep'] = function(block) {
           }
         }
       }
-    )+'\', 5)',
-    Blockly.JavaScript.ORDER_EQUALITY
-  ];
+    )+'\', 5)';
 };
 
